@@ -366,6 +366,7 @@ class UIHandler {
         newValueBtn = new Button("New Value");
         Button homeBtn = new Button("Main Directory");
         Button modifyButton = new Button("Modify");
+        Button deleteButton = new Button("Delete");
 
         // get presses of buttons and map them to functions
         saveProjectBtn.setOnAction(e -> onSaveProject());
@@ -376,6 +377,7 @@ class UIHandler {
             current_table="main";
             refreshTable();
         });
+        deleteButton.setOnAction(e -> onDeleteButton());
         
         
         modifyButton.setOnAction(e -> onModifyButton());
@@ -391,7 +393,8 @@ class UIHandler {
                 new Separator(),
                 homeBtn,
                 currentDirectory,
-                modifyButton
+                modifyButton,
+                deleteButton
         );
 
         return toolBar;
@@ -479,16 +482,20 @@ class UIHandler {
         System.out.println("Save Project clicked");
         Gson gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Data.class, new DataTypeAdapter()).create();
         String fileName = saveDatabasePopup();
-        if (fileName.isEmpty()) {
-            System.out.println("Database name is empty: Could not save database.");
-        }
+        if (fileName != null) {
+            if (fileName.isEmpty()) {
+                System.out.println("Database name is empty: Could not save database.");
+            } else {
+        
 
-        try (FileWriter writer = new FileWriter(fileName + ".json")) {
-            // convert to java string and write it to a file
-            gson.toJson(dbm.get_Database(), writer);
-            System.out.println("Data saved to "+ fileName + ".json");
-        } catch (IOException e) {
-            e.printStackTrace();
+                try (FileWriter writer = new FileWriter(fileName + ".json")) {
+                    // convert to java string and write it to a file
+                    gson.toJson(dbm.get_Database(), writer);
+                    System.out.println("Data saved to "+ fileName + ".json");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
     }
@@ -542,6 +549,14 @@ class UIHandler {
             else {
                 onRowDoubleClick(selected_row);
             }
+        }
+        refreshTable();
+    }
+
+    private void onDeleteButton() {
+        RowData selected_row = (RowData) tableView.getSelectionModel().getSelectedItem();
+        if (selected_row!= null) {
+            deleteConfirmationPopup(selected_row);
         }
         refreshTable();
     }
@@ -801,6 +816,36 @@ class UIHandler {
             
         }
         return null;
+    }
+    public void deleteConfirmationPopup(RowData row) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Delete " + row.getType() + row.getName());
+        dialog.setHeaderText("Delete item " + row.getName() + "?");
+
+        GridPane grid = new GridPane();
+
+        dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        dialog.getDialogPane().setPadding(new Insets(10));
+
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+
+            try {
+                if (row.getType().equals("Table")) {
+                    dbm.remove_table(row.getName());
+                }
+                else {
+                    dbm.get_Database().get_table(current_table).remove(row.getName());
+                }
+            } catch (Exception e) {
+                System.out.println("Error Deleting Item: " + e);
+            }
+            
+            
+            
+            
+        }
     }
 }
 
