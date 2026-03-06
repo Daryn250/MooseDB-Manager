@@ -1,0 +1,16 @@
+{
+  "tables": {
+    "hello": {
+      "Hello": {
+        "type": "Data_String",
+        "index": 0,
+        "value": "hai"
+      },
+      "whatup": {
+        "type": "Data_Integer",
+        "index": 0,
+        "value": "2"
+      }
+    }
+  }
+}

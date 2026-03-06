@@ -1,0 +1,140 @@
+@startuml MooseDB_Manager
+
+!theme plain
+
+package com.database_manager {
+
+    class App {
+        + start(Stage stage): void
+        + main(String[] args): void
+    }
+
+    class database_manager {
+        - database: Database
+        + add_new_table(String tableName): boolean
+        + remove_table(String tableName): boolean
+        + get_values(String tableName): Map
+        + get_tablenames(String tableName): Set
+        + set_database(Database d): void
+        + get_Database(): Database
+    }
+
+    class Database {
+        - tables: Map<String, Map<String, Data>>
+        + new_table(String tableName): void
+        + delete_table(String tableName): void
+        + get_values(String tableName): Map<String, Data>
+        + table_names(): Set<String>
+        + table_length(String tableName): int
+        + get_main_table(): Vector<String>
+        + get_table(String tablename): Map<String, Data>
+        + add_to_table(String tableName, String key, Data data): void
+        + remove_from_table(String tableName, int index): void
+        + remove_from_table(String tableName, String index): void
+        + pop_back(String tableName): Data
+    }
+
+    abstract class Data {
+        # index: int
+        + get_index(): int
+        + update_index(int index): void
+        + {abstract} get_type(): String
+        + {abstract} get_value(): String
+    }
+
+    class Data_String extends Data {
+        - value: String
+        + Data_String(String value, int index)
+        + get_value(): String
+        + get_type(): String
+        + set_value(String value): void
+    }
+
+    class Data_Integer extends Data {
+        - value: int
+        + Data_Integer(int value, int index)
+        + get_value(): String
+        + get_type(): String
+        + set_value(int value): void
+    }
+
+    class Data_Double extends Data {
+        - value: double
+        + Data_Double(Double value, int index)
+        + get_value(): String
+        + get_type(): String
+        + set_value(Double value): void
+    }
+
+    class Data_Paragraph extends Data {
+        - value: String[]
+        + Data_Paragraph(String[] value, int index)
+        + get_value(): String
+        + get_type(): String
+        + set_value(String[] value): void
+        + get_line(int index): String
+    }
+
+    class RowData {
+        - name: SimpleStringProperty
+        - type: SimpleStringProperty
+        - value: SimpleStringProperty
+        + RowData(String name, String type, String value)
+        + nameProperty(): SimpleStringProperty
+        + typeProperty(): SimpleStringProperty
+        + valueProperty(): SimpleStringProperty
+        + getName(): String
+        + getType(): String
+        + getValue(): String
+        + isTable(): Boolean
+    }
+
+    class UIHandler {
+        - tableView: TableView<RowData>
+        - dbm: database_manager
+        - current_table: String
+        - newTableBtn: Button
+        - newValueBtn: Button
+        - currentDirectory: Text
+        + UIHandler(database_manager db)
+        + buildRoot(): BorderPane
+        - buildTopBar(): ToolBar
+        - buildCenterTable(): TableView<RowData>
+        - refreshTable(): void
+        - setupRowDoubleClick(): void
+        - buildFromArray(): ObservableList<RowData>
+        + onSaveProject(): void
+        - onLoadProject(): void
+        - onNewTable(): void
+        - onNewValue(): void
+        - onRowDoubleClick(RowData row): void
+        - onModifyButton(): void
+        - saveDatabasePopup(): String
+    }
+
+    class DataTypeAdapter {
+        + serialize(Data src, Type typeOfSrc, JsonSerializationContext context): JsonElement
+        + deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context): Data
+    }
+
+    ' Relationships
+    App --> UIHandler : creates
+    App --> database_manager : creates
+    
+    UIHandler --> database_manager : uses
+    UIHandler --> RowData : displays
+    
+    database_manager --> Database : contains
+    
+    Database --> Data : contains Map of
+    
+    Data_String --|> Data
+    Data_Integer --|> Data
+    Data_Double --|> Data
+    Data_Paragraph --|> Data
+    
+    DataTypeAdapter -.-> Data : serializes/deserializes
+
+}
+
+@enduml
