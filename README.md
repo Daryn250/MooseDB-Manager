@@ -1,5 +1,6 @@
 
 # MooseDB Manager
+--------------------------------------------------------------------------------------------------------------------------------------
 
 A custom database manager for easy user experience, with saving, loading, data types, and more.
 
@@ -18,14 +19,18 @@ Features:
     - Integer data type
     - Double data type
     - Paragraph data type
- 
+--------------------------------------------------------------------------------------------------------------------------------------
 ![Loading from a .json file](https://github.com/Daryn250/MooseDB-Manager/blob/master/images/loading.png)
 
+--------------------------------------------------------------------------------------------------------------------------------------
 Data is saved to a .json file of your choice, and can be easily shared. I used Google's GSON library to assist with saving/loading, as well as a custom function to serialize/deserialize the datatype classes.
 
 ![Different Values Stored inside a clients table](https://github.com/Daryn250/MooseDB-Manager/blob/master/images/values.png)
 
 Please contact me if you need any clarification or assistance with this project.
 
+# UML DIAGRAM:
+--------------------------------------------------------------------------------------------------------------------------------------
+![uml diagram, as seen in the images tab](https://github.com/Daryn250/MooseDB-Manager/blob/master/images/finalProject_uml.png)
 
 
